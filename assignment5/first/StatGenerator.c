@@ -1,0 +1,130 @@
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "BinarySearchTree.h"
+
+#define TOLOWERCASE(letter) (letter >= 'A' && letter <= 'Z' ? letter + 32 : letter)
+
+Node* words;
+
+void StatGenerator_GetWords(FILE* dictionaryFile)
+	{
+		char word[512]; 
+		int index; 
+
+		do
+			{
+				bzero(word, 512);
+
+				if (fscanf(dictionaryFile, "%511[a-zA-Z]", &word[0]) )
+					{
+						for (index = 0; word[index]; index++)
+								word[index] = TOLOWERCASE(word[index]);
+
+						words = BinarySearchTree_Add(words, &word[0]);
+					}
+	
+				fscanf(dictionaryFile, "%*511[^a-zA-Z]");
+			}
+		while (!feof(dictionaryFile) );
+	}
+
+
+void StatGenerator_UpdateStats(FILE* dataFile)
+	{
+		char word[512]; 
+		int index; 
+		Node* target; 
+
+		while (!feof(dataFile) )
+			{
+				bzero(word, 512);
+
+				if (fscanf(dataFile, "%[a-zA-Z]", &word[0]) )
+					{
+						for (index = 0; word[index]; index++)
+								word[index] = TOLOWERCASE(word[index]);
+
+						target = BinarySearchTree_Get(words, &word[0]);
+
+						if (target)
+								target->occurrenceCount++;
+
+						BinarySearchTree_IncrementPrefixCounts(words, &word[0]);
+					}
+
+				fscanf(dataFile, "%*[^a-zA-Z])");
+			}
+	}
+
+
+void StatGenerator_FillOutputFile(Node* root, FILE* outputFile)
+	{
+		if (!root) 
+			return; 
+
+		StatGenerator_FillOutputFile(root->leftChild, outputFile);
+		
+		fprintf(outputFile, "%s %lu %lu\n", root->word, root->occurrenceCount, root->prefixCount);
+
+		StatGenerator_FillOutputFile(root->rightChild, outputFile);
+	}
+
+
+void StatGenerator_ConstructOutputFile(unsigned char currentLine)
+	{
+		char outputFileName[256];
+
+		sprintf(&outputFileName[0], "out%hhu.txt", currentLine);
+
+		FILE* outputFile = fopen(outputFileName, "w");
+
+		StatGenerator_FillOutputFile(words, outputFile);
+
+		fclose(outputFile);
+	}
+
+
+int main(int argumentCount, char** arguments)
+	{
+		if (argumentCount != 2)
+				return 0;
+
+		FILE* mappingFile = fopen(arguments[1], "r");
+
+		if (!mappingFile)
+				return 0;
+
+		unsigned char currentLine = 1; 
+		char dictionaryFileName[256],
+				 dataFileName[256];
+
+		while (!feof(mappingFile) )
+			{
+				fscanf(mappingFile, "%255s%*[ \t\n\v\f\r]%255s%*[ \t\n\v\f\r]", &dictionaryFileName[0], &dataFileName[0]);
+
+				FILE* dictionaryFile = fopen(&dictionaryFileName[0], "r"),
+						* dataFile = fopen(&dataFileName[0], "r");
+
+				if (!dictionaryFile || !dataFile)
+						return 0;
+
+				words = NULL;
+
+				StatGenerator_GetWords(dictionaryFile);
+
+				StatGenerator_UpdateStats(dataFile);
+				StatGenerator_ConstructOutputFile(currentLine);
+
+				fclose(dictionaryFile);
+				fclose(dataFile);
+				Node_Destroy(words);
+
+				currentLine++;
+			}
+
+		fclose(mappingFile);
+
+		return 0;
+	}

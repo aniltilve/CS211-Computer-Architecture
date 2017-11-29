@@ -1,0 +1,9 @@
+abras 0 1
+crim 0 1
+cro 0 1
+ds 0 1
+gnome 0 1
+h 0 1
+minal 0 1
+ps 0 1
+ttr 0 1
