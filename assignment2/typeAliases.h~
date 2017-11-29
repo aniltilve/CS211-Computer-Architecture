@@ -1,0 +1,24 @@
+#ifndef TYPEALIASES_H_
+#define TYPEALIASES_H_
+
+/*
+These type aliases were made to add more consistency and intuition to the C programming language.
+A number appended to the end of a type name refers to the size of that type in bytes.
+*/ 
+
+typedef char boolean;
+
+typedef signed char signedInteger1;
+typedef signed short signedInteger2;
+typedef signed int signedInteger4;
+typedef signed long signedInteger8;
+
+typedef unsigned char unsignedInteger1;
+typedef unsigned short unsignedInteger2;
+typedef unsigned int unsignedInteger4;
+typedef unsigned long unsignedInteger8;
+
+typedef float floatingPoint4;
+typedef double floatintPoint8;
+
+#endif //TYPEALIASES_H_

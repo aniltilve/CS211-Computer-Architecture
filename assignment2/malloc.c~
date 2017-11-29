@@ -1,0 +1,13 @@
+struct _Block_
+	{
+		Block* nextBlock;
+		unsigned long size; 
+		char isFree;
+	};
+
+
+void* Memory_Allocate(unsigned long size, char* file, unsigned long currentLine)
+	{
+		Header* currentBlock,
+						previousBlock;
+	}

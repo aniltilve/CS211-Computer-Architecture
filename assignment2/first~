@@ -1,0 +1,6 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+void readDict(FILE *dict_file);
+void matchStr(char* str); 
+void printResult();

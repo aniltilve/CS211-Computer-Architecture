@@ -1,0 +1,34 @@
+#include "node.h"
+
+struct _Node_
+	{
+		int value; 
+		Node* children[26]; 
+	};
+
+Node* Node_Construct()
+	{
+		Node* newNode = (Node*)malloc(sizeof(Node) );
+
+		newNode->value = 0;
+
+		int childIndex;
+
+		for (childIndex = 0; childIndex < 26; childIndex++)
+				newNode->children[childIndex] = NULL; 
+
+		return newNode; 
+	}
+
+void Node_Destroy(Node* existingNode)
+	{
+		if (!existingNode)
+				return; 
+
+		int childIndex; 
+
+		for (childIndex = 0; childIndex < 26; childIndex++)
+				Node_Destroy(existingNode->children[childIndex]);
+
+		free(existingNode);
+	}

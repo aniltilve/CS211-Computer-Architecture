@@ -1,0 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#ifndef FIRST_H_
+#define FIRST_H_
+
+int main(int argumentCount, char** argumentVector);
+
+#endif //FIRST_H_

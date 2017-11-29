@@ -1,0 +1,12 @@
+#include "myString.h"
+
+char* String_ConvertToLowerCase(char* existingString)
+	{
+		int currentIndex;
+		char currentCharacter;
+
+		for (currentIndex = 0; existingString[currentIndex]; currentIndex++)
+			existingString[currentIndex] = (char)tolower( (int)existingString[currentIndex]);
+
+		return existingString;
+	}

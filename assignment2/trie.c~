@@ -1,0 +1,122 @@
+#include "trie.h"
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#define toIndex(character) (tolower( (int)character) - (int)'a')
+
+struct _Node_
+	{
+		unsigned long value; 
+		Node* children[26]; 
+	};
+
+Node* Node_Construct()
+	{
+		Node* newNode = (Node*)malloc(sizeof(Node) );
+
+		newNode->value = 0;
+
+		unsigned short childIndex;
+
+		for (childIndex = 0; childIndex < 26; childIndex++)
+				newNode->children[childIndex] = NULL; 
+
+		return newNode; 
+	}
+
+void Node_Destroy(Node* existingNode)
+	{
+		if (!existingNode)
+				return; 
+
+		unsigned short childIndex; 
+
+		for (childIndex = 0; childIndex < 26; childIndex++)
+				Node_Destroy(existingNode->children[childIndex]);
+
+		free(existingNode);
+	}
+
+struct _Trie_
+	{
+		Node* root;
+		unsigned long numberOfItems;
+	};
+
+Trie* Trie_Construct()
+	{
+		Trie* newTrie = (Trie*)malloc(sizeof(Trie) );
+		newTrie->root = Node_Construct();
+		newTrie->numberOfItems = 0;
+
+		return newTrie;
+	}
+
+void Trie_Insert(Trie* existingTrie, char* newString)
+	{
+		unsigned long characterIndex,
+				          stringLength = strlen(newString);
+		unsigned char childIndex;
+		Node* current = existingTrie->root; 
+
+		for (characterIndex = 0; characterIndex < stringLength; characterIndex++)
+			{
+				childIndex = toIndex(newString[characterIndex]);
+
+				if (!current->children[childIndex])
+						current->children[childIndex] = Node_Construct();
+	
+				current = current->children[childIndex];
+			} 
+
+		current->value = existingTrie->numberOfItems++;
+	}
+
+unsigned char Trie_IsSuperword(Trie* existingTrie, char* comparable)
+	{
+		unsigned long characterIndex,
+									charactersScanned = 0,
+				          stringLength = strlen(comparable);
+		unsigned char childIndex;
+		Node* current = existingTrie->root; 
+
+		for (characterIndex = 0; characterIndex < stringLength; characterIndex++)
+			{
+				childIndex = toIndex(target[characterIndex]);
+
+				if (current->children[childIndex] && charactersScanned < stringLength)
+						return 1;
+	
+				charactersScanned++;
+				current = current->children[childIndex];
+			} 
+
+		return 0;
+	}
+
+unsigned char Trie_Search(Trie* existingTrie, char* target)
+	{
+		unsigned long characterIndex,
+				          stringLength = strlen(target);
+		unsigned char childIndex;
+		Node* current = existingTrie->root; 
+
+		for (characterIndex = 0; characterIndex < stringLength; characterIndex++)
+			{
+				childIndex = toIndex(target[characterIndex]);
+
+				if (!current->children[childIndex])
+						return 0;
+	
+				current = current->children[childIndex];
+			} 
+
+		return (current && current->value);
+	}
+
+void Trie_Destroy(Trie* existingTrie)
+	{
+		Node_Destroy(existingTrie->root);
+		free(existingTrie);
+	}

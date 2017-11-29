@@ -1,0 +1,16 @@
+#ifndef TRIE_H_
+#define TRIE_H_
+
+typedef struct _Node_ Node;
+
+Node* Node_Construct();
+void Node_Destroy(Node* existingNode);
+
+typedef struct _Trie_ Trie; 
+
+Trie* Trie_Construct();
+void Trie_Insert(Trie* existingTrie, char* newString);
+unsigned short Trie_Search(Trie* existingTrie, char* targetString); 
+void Trie_Destroy(Trie* existingTrie);
+
+#endif //TRIE_H_
