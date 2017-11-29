@@ -1,0 +1,34 @@
+#include "first.h"
+
+int isPrime(int argument)
+  {
+    int number; 
+
+		for (number = 2; number < argument; number++)
+			{
+				printf("%d %d\n", argument, (argument % number));
+        if (argument % number == 0 && number != argument)
+	    			return 0;
+			}
+
+    return 1;
+  }
+
+int main(int argumentCount, char** argumentVector)
+  {
+    if (argumentVector[1] == NULL)
+    {
+			printf("error\n");
+
+      return 0;
+    }
+
+    int result = isPrime(atoi(argumentVector[1]));
+
+    if (result == 1)
+        printf("yes\n");
+    else 
+        printf("no\n");
+
+    return 0; 
+  }

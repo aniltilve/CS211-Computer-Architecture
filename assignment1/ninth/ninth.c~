@@ -1,0 +1,149 @@
+#include "ninth.h"
+
+struct _Node_ 
+  {
+    int element;
+    Node* leftChild,
+        * rightChild; 
+  };
+
+Node* Node_Construct(int element, Node* leftChild, Node* rightChild)
+  {
+     Node* newNode = (Node*)malloc(sizeof(Node) );
+     newNode->element = element;
+     newNode->leftChild = leftChild; 
+     newNode->rightChild = rightChild; 
+
+     return newNode; 
+  }
+
+void Node_Destroy(Node* node)
+  {
+		if (!node)
+				return; 
+
+    if (node->rightChild)
+      	Node_Destroy(node->rightChild); 
+    if (node->leftChild)
+      	Node_Destroy(node->leftChild); 
+
+    free(node); 
+  }
+
+int BinarySearchTree_GetInOrderSuccessor(Node* root)
+	{
+		if (!root->leftChild)
+				return root->element;
+		
+		return BinarySearchTree_GetInOrderSuccessor(root->leftChild);
+	}
+
+Node* BinarySearchTree_DeleteInOrderSuccessor(Node* root, int element)
+	{
+		if (!root)
+			{}
+    else if (element < root->element)
+				root->leftChild = BinarySearchTree_DeleteInOrderSuccessor(root->leftChild, element);
+    else if (element > root->element)
+        root->rightChild = BinarySearchTree_DeleteInOrderSuccessor(root->rightChild, element);
+    else 
+			{
+				if (root->leftChild && root->rightChild)
+					{
+						root->element = BinarySearchTree_GetInOrderSuccessor(root->rightChild);
+						BinarySearchTree_DeleteInOrderSuccessor(root->rightChild, root->element);
+					}
+				else
+						root = root->rightChild ? root->rightChild : root->leftChild;
+			}
+
+		return root;
+	}
+
+Node* BinarySearchTree_Insert(Node* root, int element, int currentHeight)
+	{
+    if (!root)
+      {
+				root = Node_Construct(element, NULL, NULL);
+				printf("inserted %d\n", currentHeight); 
+      }
+    else if (element < root->element)
+        root->leftChild = BinarySearchTree_Insert(root->leftChild, element, ++currentHeight); 
+    else if (element > root->element)
+        root->rightChild = BinarySearchTree_Insert(root->rightChild, element, ++currentHeight); 
+    else
+    		printf("duplicate\n");
+
+		return root; 
+  }
+
+void BinarySearchTree_Search(Node* root, int element, int currentHeight) 
+  {
+    if (!root)
+        printf("absent\n");
+    else if (element < root->element)
+        BinarySearchTree_Search(root->leftChild, element, ++currentHeight); 
+    else if (element > root->element)
+        BinarySearchTree_Search(root->rightChild, element, ++currentHeight); 
+    else 
+        printf("present %d\n", currentHeight); 
+  }
+
+Node* BinarySearchTree_Delete(Node* root, int element)
+	{
+		if (!root)
+				printf("fail\n");
+    else if (element < root->element)
+				root->leftChild = BinarySearchTree_Delete(root->leftChild, element);
+    else if (element > root->element)
+        root->rightChild = BinarySearchTree_Delete(root->rightChild, element);
+    else 
+			{
+				if (root->leftChild && root->rightChild)
+					{
+						root->element = BinarySearchTree_GetInOrderSuccessor(root->rightChild);
+						root->rightChild = BinarySearchTree_DeleteInOrderSuccessor(root->rightChild, root->element);
+					}
+				else
+						root = root->rightChild ? root->rightChild : root->leftChild;
+				
+				printf("success\n");	
+			}
+
+		return root;
+  }
+
+
+int main(int argumentCount, char** argumentVector)
+  {
+    FILE* textFile = fopen(argumentVector[1], "r"); 
+
+    if (!textFile || fgetc(textfile) == EOF)
+      {
+				printf("error\n"); 
+				fclose(textFile);
+
+        return 0;
+      }
+
+		Node* root = NULL; 
+	  int argument; 
+		char operation;
+
+   	while (fscanf(textFile, "%c\t%d\n", &operation, &argument) != EOF)
+			{	
+				if (operation == 'i')
+						root = BinarySearchTree_Insert(root, argument, 1);
+				else if (operation == 's')
+						BinarySearchTree_Search(root, argument, 1);
+				else if (operation == 'd')
+						root = BinarySearchTree_Delete(root, argument);
+				else 
+						printf("error\n");
+			}
+
+    Node_Destroy(root);
+    fclose(textFile);
+
+    return 0;  
+  }

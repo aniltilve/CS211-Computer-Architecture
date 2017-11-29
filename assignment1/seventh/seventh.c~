@@ -1,0 +1,14 @@
+#include "seventh.h"
+#include <string.h>
+
+int main(int argumentCount, char** argumentVector)
+  {
+    int currentArgument;
+
+    for (currentArgument = 1; currentArgument < argumentCount; currentArgument++)
+        printf("%c", *(argumentVector[currentArgument] + strlen(argumentVector[currentArgument]) - 1));
+
+    printf("\n");
+
+    return 0;
+  }

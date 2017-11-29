@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifndef EIGHTH_H_
+#define EIGHTH_H_
+
+typedef struct _Node_ Node;
+Node* Node_construct(int element, int height, Node* leftChild, Node* rightChild);
+void Node_destroy(Node* node); 
+
+void BinarySearchTree_insert(Node* root, int element, int height); 
+void BinarySearchTree_search(Node* root, int element); 
+
+int main(int argumentCount, char** argumentVector); 
+
+#endif //SECOND_H_

@@ -1,0 +1,10 @@
+all: sixth
+
+sixth: sixth.o
+	gcc sixth.o -o sixth
+
+sixth.o: sixth.c sixth.h
+	gcc -c sixth.c
+
+clean:
+	rm -f *o sixth

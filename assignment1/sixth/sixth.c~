@@ -1,0 +1,13 @@
+#include "sixth.h"
+
+int main(int argumentCount, char** argumentVector)
+  {
+    int currentArgument;
+
+    for (currentArgument = 1; currentArgument < argumentCount; currentArgument++)
+        printf("%c", *argumentVector[currentArgument]);
+
+    printf("\n");
+
+    return 0;
+  }
