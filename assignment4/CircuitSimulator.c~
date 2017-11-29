@@ -1,0 +1,106 @@
+//NOTE: Tab width is set to 2
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "Decoder.c"
+
+#define TOINDEX(x) x > 90? x - 71 : x - 65
+
+void CircuitSimulator_Construct(FILE* circuitDescription, FILE* circuitInputs, int* values)
+	{
+		int numberOfInputs = 0;
+		char currentInput;
+		int currentInputValue;
+			
+		fscanf(circuitDescription, "INPUTVAR%*[ \t\n\v\f\r]%d%*[ \t\n\v\f\r]", &numberOfInputs);
+		printf("%d\n", numberOfInputs);
+
+		for ( ; numberOfInputs > 0; numberOfInputs--)
+			{
+			  fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]", &currentInput);
+				fscanf(circuitInputs, "%d%*[ \t\n\v\f\r]", &currentInputValue);
+				values[TOINDEX(currentInput)] = currentInputValue; 
+				printf(" %c = %d\n", currentInput, values[TOINDEX(currentInput)]);
+			}
+
+	}
+
+
+void CircuitSimulator_And(FILE* circuitDescription, int* values)
+	{
+		char input1,
+				 input2,
+				 output;
+
+		fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]", &input1, &input2, &output); 
+
+		values[TOINDEX(output)] = values[TOINDEX(input1)] & values[TOINDEX(input2)];
+	}
+
+
+void CircuitSimulator_Or(FILE* circuitDescription, int* values)
+	{
+		char input1,
+				 input2,
+				 output;
+
+		fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]", &input1, &input2, &output); 
+
+		values[TOINDEX(output)] = values[TOINDEX(input1)] | values[TOINDEX(input2)];
+	}
+
+
+void CircuitSimulator_Not(FILE* circuitDescription, int* values)
+	{
+		char input,
+				 output;
+
+		fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]", &input, &output); 
+
+		values[TOINDEX(output)] = ~values[TOINDEX(input)];
+	}
+
+
+int main(int numberOfArguments, char** arguments)
+	{
+		FILE* circuitDescription = fopen(arguments[1], "r"),
+				*	circuitInputs = fopen(arguments[2], "r");
+		
+		if (!circuitDescription || !circuitInputs)
+				return 0; 
+
+		char operation[12];
+		int values[52];
+
+		while (!feof(circuitInputs) )
+			{
+				CircuitSimulator_Construct(circuitDescription, circuitInputs, values); 
+
+				while (!feof(circuitDescription) )
+					{
+				  	fscanf(circuitDescription, "%s%*[ \t\n\v\f\r]", &operation[0]);
+
+						if (strlen(&operation[0]) > 1)
+							{
+								if (strcmp(&operation[0], "AND") == 0)
+										CircuitSimulator_And(circuitDescription, values);
+								else if (strcmp(&operation[0], "OR") == 0) 
+										CircuitSimulator_Or(circuitDescription, values);
+								else if (strcmp(&operation[0], "NOT") == 0) 
+										CircuitSimulator_Not(circuitDescription, values);
+								else if (strcmp(&operation[0], "DECODER") == 0) 
+									{
+										Decoder_Decode(circuitDescription, values);
+									}
+								else if (strcmp(&operation[0], "MULTIPLEXER") == 0) {}
+								else 
+									continue;
+							}
+					}
+
+				rewind(circuitDescription);
+			};
+
+		return 0;
+	}

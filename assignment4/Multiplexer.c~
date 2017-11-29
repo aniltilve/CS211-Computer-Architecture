@@ -1,0 +1,12 @@
+#define TOINDEX(x) x > 90? x - 71 : x - 65
+
+void Multiplexer_Multiplex2to1(FILE* circuitDescription, int* values)
+	{
+		int inputs[2],
+				index;
+		char selector,
+				 output; 
+
+		for (index = 0; index < sizeof(inputs) / sizeof(int); index++)
+				fscanf(circuitDescription, "%d%*[ \t\n\v\f\r]", &input[index]);
+	}

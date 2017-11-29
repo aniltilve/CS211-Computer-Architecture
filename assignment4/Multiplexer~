@@ -1,0 +1,4 @@
+char Multiplexer_Multiplex2to1(char input1, char input2, char selector)
+	{
+		
+	}

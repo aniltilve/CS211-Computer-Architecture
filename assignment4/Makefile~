@@ -1,0 +1,15 @@
+CFLAGS = -c -Wall -Werror
+
+all: first
+
+first: CircuitSimulator.o Decoder.o
+	gcc CircuitSimulator.o Decoder.o -o first
+
+CircuitSimulator.o: CircuitSimulator.c
+	gcc $(CFLAGS) CircuitSimulator.c
+
+Decoder.o: Decoder.c
+	gcc $(CFLAGS) Decoder.c
+
+clean:
+	rm -f *.o first

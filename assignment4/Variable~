@@ -1,0 +1,7 @@
+typedef struct _Variable_ Variable;
+
+struct _Variable_
+	{
+		char name; 
+		Variable Next
+	};

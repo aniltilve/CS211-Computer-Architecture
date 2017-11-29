@@ -1,0 +1,11 @@
+typedef struct _Variable_ Variable;
+
+struct _Variable_
+	{
+		char name; 
+		char value; 
+		Variable* Next;
+	};
+
+
+Variable* Variable_Add(Variable* variables, char name, char value);

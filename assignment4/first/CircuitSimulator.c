@@ -1,0 +1,155 @@
+//NOTE: Tab width is set to 2
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "Decoder.h"
+#include "Multiplexer.h"
+
+#define TOINDEX(x) (x > 90? x - 71 : x - 65)
+#define GETVALUE(y) (y > 49? values[TOINDEX(y)] : y - 48 )
+
+void CircuitSimulator_Construct(FILE* circuitDescription, FILE* circuitInputs, int* values)
+	{
+		int numberOfInputs = 0;
+		char currentInput;
+		int currentInputValue;
+			
+		fscanf(circuitDescription, "INPUTVAR%*[ \t\n\v\f\r]%d%*[ \t\n\v\f\r]", &numberOfInputs);
+
+		for ( ; numberOfInputs > 0; numberOfInputs--)
+			{
+			  fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]", &currentInput);
+				fscanf(circuitInputs, "%d%*[ \t\n\v\f\r]", &currentInputValue);
+				values[TOINDEX(currentInput)] = currentInputValue; 
+			}
+
+	  int numberOfOutputs = 0;
+	
+		fscanf(circuitDescription, "OUTPUTVAR%*[ \t\n\v\f\r]%d%*[ \t\n\v\f\r]", &numberOfOutputs);
+
+		for ( ; numberOfOutputs > 0; numberOfOutputs--)
+			  fscanf(circuitDescription, "%*c%*[ \t\n\v\f\r]");
+	}
+
+
+void CircuitSimulator_And(FILE* circuitDescription, int* values)
+	{
+		char input1,
+				 input2,
+				 output;
+
+		fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]", &input1, &input2, &output); 
+
+
+		int value1 = GETVALUE(input1),
+				value2 = GETVALUE(input2);
+
+
+		values[TOINDEX(output)] = value1 & value2; 
+	}
+
+
+void CircuitSimulator_Or(FILE* circuitDescription, int* values)
+	{
+		char input1,
+				 input2,
+				 output;
+
+
+		fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]", &input1, &input2, &output); 
+
+
+		int value1 = GETVALUE(input1),
+				value2 = GETVALUE(input2);
+
+
+		values[TOINDEX(output)] = value1 | value2; 
+	}
+
+
+void CircuitSimulator_Not(FILE* circuitDescription, int* values)
+	{
+		char input,
+				 output;
+
+		fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]%c%*[ \t\n\v\f\r]", &input, &output); 
+
+		int value = GETVALUE(input);
+
+		values[TOINDEX(output)] = !value;
+	}
+
+
+void CircuitSimulator_PrintOutput(FILE* circuitDescription, int* values)
+	{
+		rewind(circuitDescription); 
+
+		int numberOfInputs = 0;
+			
+		fscanf(circuitDescription, "INPUTVAR%*[ \t\n\v\f\r]%d%*[ \t\n\v\f\r]", &numberOfInputs);
+
+		for ( ; numberOfInputs > 0; numberOfInputs--)
+			  fscanf(circuitDescription, "%*c%*[ \t\n\v\f\r]");
+
+		int numberOfOutputs = 0;
+		char currentOutput;
+	
+		fscanf(circuitDescription, "OUTPUTVAR%*[ \t\n\v\f\r]%d%*[ \t\n\v\f\r]", &numberOfOutputs);
+
+		for ( ; numberOfOutputs > 0; numberOfOutputs--)
+			{
+			  fscanf(circuitDescription, "%c%*[ \t\n\v\f\r]", &currentOutput);
+				printf("%d ", values[TOINDEX(currentOutput)]);
+			}
+
+		printf("\n");
+	}
+
+
+int main(int numberOfArguments, char** arguments)
+	{
+		FILE* circuitDescription = fopen(arguments[1], "r"),
+				*	circuitInputs = fopen(arguments[2], "r");
+
+		char operation[12];
+		int values[52];
+		int index;
+
+		for (index = 0; index < 52; index++)
+				values[index] = 0;
+
+		while (!feof(circuitInputs) )
+			{
+				CircuitSimulator_Construct(circuitDescription, circuitInputs, values); 
+
+				while (!feof(circuitDescription) )
+					{
+				  	fscanf(circuitDescription, "%s%*[ \t\n\v\f\r]", &operation[0]);
+
+						if (strlen(&operation[0]) > 1)
+							{
+								if (strcmp(&operation[0], "AND") == 0)
+										CircuitSimulator_And(circuitDescription, values);
+								else if (strcmp(&operation[0], "OR") == 0) 
+										CircuitSimulator_Or(circuitDescription, values);
+								else if (strcmp(&operation[0], "NOT") == 0) 
+										CircuitSimulator_Not(circuitDescription, values);
+								else if (strcmp(&operation[0], "DECODER") == 0) 
+										Decoder_Decode(circuitDescription, values);
+								else if (strcmp(&operation[0], "MULTIPLEXER") == 0) 
+										Multiplexer_Multiplex(circuitDescription, values);
+								else 
+									continue;
+							}
+					}
+
+				CircuitSimulator_PrintOutput(circuitDescription, values);
+				rewind(circuitDescription);
+			};
+
+		fclose(circuitDescription);
+		fclose(circuitInputs);
+
+		return 0;
+	}

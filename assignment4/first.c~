@@ -1,0 +1,36 @@
+//NOTE: Tab width is set to 2
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define UPPERCASE_TOINDEX 
+#define LOWERCASE_TOINDEX
+
+
+int main(int numberOfArguments, char** arguments)
+	{
+		FILE* circuitDescription = fopen(arguments[1], "r"),
+				*	inputFile = fopen(arguments[2], "r");
+		
+		if (!circuitDescription || !inputs)
+				return 0; 
+/*
+		char inputs[26],
+				 outputs[26],
+				 intermediates[26]; 
+*/
+		char operation[12]; 
+		int status;
+
+		do
+			{
+				status = fscanf(circuitDescription, "%s", &operation[0]);
+
+				if (strlen(&operation[0]) > 2)
+						printf("%s\n", &operation[0]);
+			}
+		while (status != EOF);
+
+		return 0;
+	}
